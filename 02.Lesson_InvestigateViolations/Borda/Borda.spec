@@ -1,5 +1,5 @@
 
-// Checks that a voter's "registered" mark is changed correctly - 
+// Checks that a voter's "registered" mark is changed correctly -
 // if it's false after a function call, it was false before
 // if it's true after a function call it either started as true or changed from false to true via registerVoter()
 rule registeredCannotChangeOnceSet(method f, address voter){
@@ -11,7 +11,7 @@ rule registeredCannotChangeOnceSet(method f, address voter){
     age, voterRegAfter, voted, vote_attempts, black_listed = getFullVoterDetails(e, voter);
 
     assert (voterRegAfter != voterRegBefore =>
-         (!voterRegBefore && voterRegAfter && f.selector == registerVoter(uint8).selector), 
+         (!voterRegBefore && voterRegAfter && f.selector == registerVoter(uint8).selector),
             "voter was registered from an unregistered state, by other function than registerVoter()");
 }
 
@@ -33,7 +33,7 @@ rule correctPointsIncreaseToContenders(address first, address second, address th
     uint256 thirdPointsBefore = getPointsOfContender(e, third);
 
     vote(e, first, second, third);
-    
+
     assert (getPointsOfContender(e, first) - firstPointsBefore == 3, "first choice receieved other amount than 3 points");
     assert (getPointsOfContender(e, second) - secondPointsBefore == 2, "second choice receieved other amount than 2 points");
     assert (getPointsOfContender(e, third) - thirdPointsBefore == 1, "third choice receieved other amount than 1 points");
@@ -44,11 +44,14 @@ rule correctPointsIncreaseToContenders(address first, address second, address th
 rule onceBlackListedNotOut(method f, address voter){
     env e; calldataarg args;
     uint256 age; bool registeredBefore; bool voted; uint256 vote_attempts; bool black_listed_Before;
+
     age, registeredBefore, voted, vote_attempts, black_listed_Before = getFullVoterDetails(e, voter);
+    require(registeredBefore == true);
+
     f(e, args);
     bool registeredAfter; bool black_listed_After;
     age, registeredAfter, voted, vote_attempts, black_listed_After = getFullVoterDetails(e, voter);
-    
+
     assert (registeredBefore && black_listed_Before) => black_listed_After, "the specified user got out of the black list";
 }
 
