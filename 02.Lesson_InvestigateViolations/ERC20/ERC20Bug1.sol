@@ -190,6 +190,8 @@ contract ERC20 is IERC20, IERC20Metadata {
 
         _transfer(sender, recipient, amount);
 
+
+
         return true;
     }
 
@@ -213,7 +215,7 @@ contract ERC20 is IERC20, IERC20Metadata {
         _approve(
             msg.sender,
             spender,
-            _allowances[msg.sender][spender] - addedValue
+            _allowances[msg.sender][spender] + addedValue
         );
         return true;
     }
